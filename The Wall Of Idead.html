@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Wall of Idea</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    color: #222;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0066cc;
+    color: white;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    font-size: 2rem;
+  }
+  #credits-btn {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  #credits-btn:hover {
+    background: white;
+    color: #0066cc;
+  }
+
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    padding: 1rem 2rem;
+    height: calc(100vh - 68px);
+    overflow-y: auto;
+    gap: 1rem;
+    /* for scroll bar styling */
+  }
+
+  .idea-item {
+    background: #f0f7ff;
+    border-left: 5px solid #0066cc;
+    padding: 1rem;
+    border-radius: 6px;
+    color: #222;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+    max-width: 300px;
+    flex: 1 1 300px; /* base width 300px, grows/shrinks */
+  }
+  .idea-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+    z-index: 10;
+    position: relative;
+  }
+
+  .idea-number {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #004a99;
+  }
+
+  .idea-text {
+    font-size: 1.8rem;
+    line-height: 2;
+  }
+
+  .idea-footer {
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .idea-author {
+    font-style: italic;
+    color: #555;
+  }
+
+  .idea-link {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .idea-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Scrollbar style */
+  main::-webkit-scrollbar {
+    width: 8px;
+  }
+  main::-webkit-scrollbar-thumb {
+    background-color: #0066cc;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+  <header>
+    The Wall of Idea
+    <button id="credits-btn" title="Crédits">Crédits</button>
+  </header>
+  <main id="ideas-container">
+    <!-- Idées générées par JS -->
+  </main>
+
+  <script>
+    const colors = [
+      '#A8D5BA', '#FFD6A5', '#FDFFB6', '#CAE9FF', '#FFC6FF', '#B5EAEA'
+    ];
+
+    const ideas = [
+      
+    ];
+
+    const author = "lespartan178";
+    const youtubeBase = "https://www.youtube.com/user/lespartan178";
+    const container = document.getElementById('ideas-container');
+
+    ideas.forEach((text, i) => {
+      const div = document.createElement('div');
+      div.className = 'idea-item';
+      div.dataset.index = i + 1;
+      div.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      div.innerHTML = `
+        <div class="idea-number">#${i + 1}</div>
+        <div class="idea-text">${text}</div>
+        <div class="idea-footer">
+          <div class="idea-author">@${author}</div>
+          <a class="idea-link" href="${youtubeBase}" target="_blank" rel="noopener noreferrer">Chaîne YouTube</a>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    document.getElementById('credits-btn').addEventListener('click', () => {
+      alert("The Wall of Idea\nCréé par lespartan178 avec l'aide de ChatGPT 🤖\nMerci pour tes idées !");
+    });
+  </script>
+</body>
+</html>
