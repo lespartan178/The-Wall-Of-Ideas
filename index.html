@@ -1,214 +1,203 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The Wall of Idea</title>
-<style>
-  * {
-    box-sizing: border-box;
-  }
-  body, html {
-    margin: 0; padding: 0; height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #fff;
-    color: #222;
-  }
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #0066cc;
-    color: white;
-    padding: 1rem 2rem;
-    font-weight: 700;
-    font-size: 2rem;
-  }
-  #credits-btn {
-    background: transparent;
-    border: 2px solid white;
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  #credits-btn:hover {
-    background: white;
-    color: #0066cc;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Wall of Ideas</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --accent: #3b82f6;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
 
-  main {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    padding: 1rem 2rem;
-    height: calc(100vh - 68px);
-    overflow-y: auto;
-    gap: 1rem;
-    /* for scroll bar styling */
-  }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-  .idea-item {
-    background: #f0f7ff;
-    border-left: 5px solid #0066cc;
-    padding: 1rem;
-    border-radius: 6px;
-    color: #222;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: default;
-    max-width: 300px;
-    flex: 1 1 300px; /* base width 300px, grows/shrinks */
-  }
-  .idea-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
-    z-index: 10;
-    position: relative;
-  }
+    header, .filters {
+      padding: 1em;
+      background: var(--surface);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
 
-  .idea-number {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #004a99;
-  }
+    button {
+      padding: 0.5em 1em;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #2563eb;
+    }
 
-  .idea-text {
-    font-size: 1.8rem;
-    line-height: 2;
-  }
+    .filters select {
+      background: var(--surface);
+      color: white;
+      border: none;
+      padding: 0.5em;
+      border-radius: 5px;
+    }
 
-  .idea-footer {
-    font-size: 0.9rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    #wall {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      padding: 1em;
+      justify-content: center;
+    }
 
-  .idea-author {
-    font-style: italic;
-    color: #555;
-  }
+    .comment {
+      background: var(--surface);
+      padding: 1em;
+      border-radius: 10px;
+      transition: transform 0.2s;
+      cursor: pointer;
+      flex-shrink: 0;
+      max-width: 250px;
+      word-wrap: break-word;
+    }
+    .comment:hover {
+      transform: scale(1.05);
+    }
+    .comment small {
+      color: var(--muted);
+    }
 
-  .idea-link {
-    color: #0066cc;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  .idea-link:hover {
-    text-decoration: underline;
-  }
-
-  /* Scrollbar style */
-  main::-webkit-scrollbar {
-    width: 8px;
-  }
-  main::-webkit-scrollbar-thumb {
-    background-color: #0066cc;
-    border-radius: 4px;
-  }
-</style>
+    .credit {
+      text-align: center;
+      margin: 2em;
+      font-size: 0.9em;
+      color: var(--muted);
+    }
+  </style>
 </head>
 <body>
   <header>
-    The Wall of Idea
-    <button id="credits-btn" title="Crédits">Crédits</button>
-    <button id="login-btn">Se connecter avec Google</button>
-    <button id="logout-btn" style="display: none;">Se déconnecter</button>
-    <p id="user-info">Non connecté</p>
+    <div>
+      <button id="login-btn">Se connecter avec Google</button>
+      <button id="logout-btn" style="display:none;">Se déconnecter</button>
+    </div>
+    <div id="user-info">Non connecté</div>
   </header>
-  <main id="ideas-container">
-    <!-- Idées générées par JS -->
-  </main>
 
-  <script>
-    const colors = [
-      '#A8D5BA', '#FFD6A5', '#FDFFB6', '#CAE9FF', '#FFC6FF', '#B5EAEA'
-    ];
+  <div class="filters">
+    <select id="language-filter">
+      <option value="all">Toutes les langues</option>
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+    </select>
+    <select id="sort-by">
+      <option value="date">Date</option>
+      <option value="likes">Likes</option>
+    </select>
+  </div>
 
-    const ideas = [
+  <div id="wall"></div>
+  <div class="credit">Site fait par lespartan178 avec l'aide de ChatGPT</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, onSnapshot, updateDoc, doc, increment, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDcFd8YZqGtN3ekwcgxPdgR0kdvGMhUDlw",
+      authDomain: "thewallofideas.firebaseapp.com",
+      projectId: "thewallofideas",
+      storageBucket: "thewallofideas.firebasestorage.app",
+      messagingSenderId: "705936042775",
+      appId: "1:705936042775:web:5454fdcbf0a8c2efd2e552",
+      measurementId: "G-9BBKCWBLNR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
+
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const userInfo = document.getElementById("user-info");
+    const wall = document.getElementById("wall");
+    const languageFilter = document.getElementById("language-filter");
+    const sortBy = document.getElementById("sort-by");
+
+    let currentUser = null;
+
+    loginBtn.onclick = () => signInWithPopup(auth, provider);
+    logoutBtn.onclick = () => signOut(auth);
+
+    onAuthStateChanged(auth, user => {
+      currentUser = user;
+      if (user) {
+        userInfo.textContent = `Connecté : ${user.displayName}`;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+      } else {
+        userInfo.textContent = "Non connecté";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+      }
+    });
+
+    const renderComments = async () => {
+      wall.innerHTML = "";
+      const q = query(collection(db, "comments"), orderBy(sortBy.value === "likes" ? "likes" : "date", "desc"));
+      const snapshot = await getDocs(q);
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        if (languageFilter.value === "all" || data.language === languageFilter.value) {
+          const div = document.createElement("div");
+          div.className = "comment";
+          div.style.background = `hsl(${Math.random()*360}, 70%, 30%)`;
+          div.innerHTML = `
+            <p>\u201c${data.text}\u201d</p>
+            <small>${data.user} - ${new Date(data.date).toLocaleDateString()} (${data.language})</small><br>
+            <button>👍 ${data.likes || 0}</button>
+          `;
+          div.querySelector("button").onclick = async () => {
+            if (!currentUser) return alert("Connecte-toi pour liker !");
+            await updateDoc(doc(db, "comments", docSnap.id), { likes: increment(1) });
+            renderComments();
+          };
+          wall.appendChild(div);
+        }
+      });
+    }
+
+    languageFilter.onchange = renderComments;
+    sortBy.onchange = renderComments;
+
+    // Live reload
+    onSnapshot(collection(db, "comments"), renderComments);
+
+    // Ajout d'exemples automatiques pour test si vide
+    const exampleComments = [
       
     ];
 
-    const author = "lespartan178";
-    const youtubeBase = "https://www.youtube.com/user/lespartan178";
-    const container = document.getElementById('ideas-container');
+    const seedComments = async () => {
+      const existing = await getDocs(collection(db, "comments"));
+      if (existing.empty) {
+        for (const c of exampleComments) {
+          await addDoc(collection(db, "comments"), c);
+        }
+      }
+    };
+    seedComments();
 
-    ideas.forEach((text, i) => {
-      const div = document.createElement('div');
-      div.className = 'idea-item';
-      div.dataset.index = i + 1;
-      div.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      div.innerHTML = `
-        <div class="idea-number">#${i + 1}</div>
-        <div class="idea-text">${text}</div>
-        <div class="idea-footer">
-          <div class="idea-author">@${author}</div>
-          <a class="idea-link" href="${youtubeBase}" target="_blank" rel="noopener noreferrer">Chaîne YouTube</a>
-        </div>
-      `;
-      container.appendChild(div);
-    });
-
-    document.getElementById('credits-btn').addEventListener('click', () => {
-      alert("The Wall of Idea\nCréé par lespartan178 avec l'aide de ChatGPT 🤖\nMerci pour tes idées !");
-    });
   </script>
- <!-- Firebase App (core) -->
-<script type="module">
-  // Import Firebase SDK
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDcFd8YZqGtN3ekwcgxPdgR0kdvGMhUDlw",
-    authDomain: "thewallofideas.firebaseapp.com",
-    projectId: "thewallofideas",
-    storageBucket: "thewallofideas.firebasestorage.app",
-    messagingSenderId: "705936042775",
-    appId: "1:705936042775:web:5454fdcbf0a8c2efd2e552",
-    measurementId: "G-9BBKCWBLNR"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-
-  // Sign-in
-  const loginBtn = document.getElementById("login-btn");
-  const logoutBtn = document.getElementById("logout-btn");
-  const userInfo = document.getElementById("user-info");
-
-  loginBtn.onclick = () => {
-    signInWithPopup(auth, provider)
-      .then(result => {
-        const user = result.user;
-        userInfo.innerText = `Connecté en tant que ${user.displayName}`;
-      })
-      .catch(error => {
-        alert("Erreur de connexion : " + error.message);
-      });
-  };
-
-  logoutBtn.onclick = () => {
-    signOut(auth).then(() => {
-      userInfo.innerText = "Déconnecté";
-    });
-  };
-
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      userInfo.innerText = `Connecté en tant que ${user.displayName}`;
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline-block";
-    } else {
-      userInfo.innerText = "Non connecté";
-      loginBtn.style.display = "inline-block";
-      logoutBtn.style.display = "none";
-    }
-  });
-</script>
 </body>
 </html>
