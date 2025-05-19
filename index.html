@@ -114,6 +114,9 @@
   <header>
     The Wall of Idea
     <button id="credits-btn" title="Crédits">Crédits</button>
+    <button id="login-btn">Se connecter avec Google</button>
+    <button id="logout-btn" style="display: none;">Se déconnecter</button>
+    <p id="user-info">Non connecté</p>
   </header>
   <main id="ideas-container">
     <!-- Idées générées par JS -->
@@ -152,5 +155,60 @@
       alert("The Wall of Idea\nCréé par lespartan178 avec l'aide de ChatGPT 🤖\nMerci pour tes idées !");
     });
   </script>
+ <!-- Firebase App (core) -->
+<script type="module">
+  // Import Firebase SDK
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDcFd8YZqGtN3ekwcgxPdgR0kdvGMhUDlw",
+    authDomain: "thewallofideas.firebaseapp.com",
+    projectId: "thewallofideas",
+    storageBucket: "thewallofideas.firebasestorage.app",
+    messagingSenderId: "705936042775",
+    appId: "1:705936042775:web:5454fdcbf0a8c2efd2e552",
+    measurementId: "G-9BBKCWBLNR"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // Sign-in
+  const loginBtn = document.getElementById("login-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+  const userInfo = document.getElementById("user-info");
+
+  loginBtn.onclick = () => {
+    signInWithPopup(auth, provider)
+      .then(result => {
+        const user = result.user;
+        userInfo.innerText = `Connecté en tant que ${user.displayName}`;
+      })
+      .catch(error => {
+        alert("Erreur de connexion : " + error.message);
+      });
+  };
+
+  logoutBtn.onclick = () => {
+    signOut(auth).then(() => {
+      userInfo.innerText = "Déconnecté";
+    });
+  };
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      userInfo.innerText = `Connecté en tant que ${user.displayName}`;
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    } else {
+      userInfo.innerText = "Non connecté";
+      loginBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+    }
+  });
+</script>
 </body>
 </html>
