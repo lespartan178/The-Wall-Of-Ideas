@@ -222,9 +222,9 @@ const firebaseConfig = {
 };
 
 // Initialisation Firebase (très important)
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+  
   // Firebase UI config
   const uiConfig = {
     signInSuccessUrl: '/',
