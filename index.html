@@ -3,404 +3,165 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Wall of Ideas</title>
+  <title>Mur d'idées</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #dbe9f4, #e0f7fa);
-      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4faff;
+      color: #222;
     }
+
     header {
-      background-color: #2196f3;
+      background-color: #1976d2;
       color: white;
-      padding: 1em;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1em;
-    }
-    h1 {
-      margin: 0;
-      flex-grow: 1;
-    }
-    #filters {
-      display: flex;
-      gap: 1em;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 0.5em;
-      width: 100%;
-    }
-    select, button {
-      padding: 0.3em 0.6em;
-      font-size: 1em;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      cursor: pointer;
-      transition: border-color 0.3s;
-    }
-    select:hover, button:hover {
-      border-color: #2196f3;
-    }
-    main {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1em;
-      padding: 1em;
-      justify-content: center;
-    }
-    .idea {
-      background: white;
-      padding: 1em;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: fit-content;
-      max-width: 320px;
-      transition: transform 0.2s;
-      cursor: pointer;
-      user-select: none;
-      border: 4px solid transparent; /* on mettra couleur dynamique */
-    }
-    .idea:hover {
-      transform: scale(1.05);
-    }
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 0.7em;
-    }
-    .author {
+      padding: 1em 2em;
       display: flex;
       flex-direction: column;
+      gap: 0.5em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      align-items: center;
+    }
+
+    select {
+      padding: 0.4em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1em;
+      padding: 2em;
+    }
+
+    .idea {
+      background-color: white;
+      border-left: 8px solid #1976d2;
+      border-radius: 10px;
+      padding: 1em;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .idea:hover {
+      transform: scale(1.02);
+    }
+
+    .idea .meta {
       font-size: 0.9em;
-      color: #444;
+      margin-top: 0.5em;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5em;
     }
-    .author a {
-      color: #2196f3;
+
+    .idea a {
+      color: #1976d2;
       text-decoration: none;
-      font-weight: 600;
     }
-    .author a:hover {
+
+    .idea a:hover {
       text-decoration: underline;
     }
-    .date {
-      font-size: 0.8em;
-      color: #888;
-      margin-top: 2px;
-    }
-    .likes {
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-      font-weight: 600;
-      color: #e91e63;
-    }
-    .like-btn {
-      cursor: pointer;
-      border: none;
-      background-color: #2196f3;
-      color: white;
-      border-radius: 5px;
-      padding: 0.3em 0.6em;
-      font-size: 0.9em;
-      transition: background-color 0.3s;
-    }
-    .like-btn:disabled {
-      background-color: #90caf9;
-      cursor: default;
-    }
+
     footer {
       text-align: center;
       padding: 1em;
-      background-color: #2196f3;
+      background: #1976d2;
       color: white;
-      margin-top: 2em;
       font-size: 0.9em;
     }
-
-    /* Modal styles */
-    #loginModal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-    #loginModal.active {
-      display: flex;
-    }
-    #loginBox {
-      background: white;
-      padding: 2em;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      width: 300px;
-      max-width: 90vw;
-      text-align: center;
-      position: relative;
-    }
-    #closeLogin {
-      position: absolute;
-      top: 0.5em; right: 0.7em;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1.5em;
-      color: #666;
-    }
-    #userInfo {
-      margin-left: 1em;
-      font-weight: bold;
-    }
   </style>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.js"></script>
-  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.css" />
-
 </head>
 <body>
-
   <header>
-    <h1>The Wall of Ideas</h1>
-    <div id="filters">
-      <label for="langFilter">Langue:</label>
+    <h1>Mur d'idées</h1>
+    <div class="filters">
+      <label for="langFilter">Langue :</label>
       <select id="langFilter">
         <option value="all">Toutes</option>
-        <option value="fr">Français</option>
-        <option value="en">Anglais</option>
+        <option value="fr">FR</option>
+        <option value="en">EN</option>
       </select>
-
-      <label for="sortFilter">Trier par:</label>
+      <label for="sortFilter">Trier :</label>
       <select id="sortFilter">
         <option value="date-desc">Date ↓</option>
         <option value="date-asc">Date ↑</option>
         <option value="likes-desc">Likes ↓</option>
         <option value="likes-asc">Likes ↑</option>
       </select>
-
-      <button id="resetFilters">Réinitialiser</button>
-
-      <button id="loginBtn" style="margin-left:auto; background:#e91e63; color:white;">Se connecter</button>
-      <span id="userInfo" style="display:none;"></span>
-      <button id="logoutBtn" style="display:none; background:#444; color:white; border:none; border-radius:5px; padding:0.3em 0.6em; cursor:pointer; margin-left:0.5em;">Déconnexion</button>
     </div>
   </header>
 
   <main id="ideasWall"></main>
 
   <footer>
-    <p>Fait par <strong>lespartan178</strong> avec l'aide de ChatGPT</p>
+    <p>&copy; 2025 • Projet par lespartan178</p>
   </footer>
 
-  <!-- Modal connexion -->
-  <div id="loginModal">
-    <div id="loginBox">
-      <span id="closeLogin">&times;</span>
-      <h2>Connexion / Inscription</h2>
-      <div id="firebaseui-auth-container"></div>
-    </div>
-  </div>
+  <script>
+    const ideas = [
+      
+    ];
 
-<script>
-  // Ta config Firebase (à remplacer par ta config)
-const firebaseConfig = {
-  apiKey: "AIzaSyDcFd8YZqGtN3ekwcgxPdgR0kdvGMhUDlw",
-  authDomain: "thewallofideas.firebaseapp.com",
-  projectId: "thewallofideas",
-  storageBucket: "thewallofideas.firebasestorage.app",
-  messagingSenderId: "705936042775",
-  appId: "1:705936042775:web:5454fdcbf0a8c2efd2e552",
-  measurementId: "G-9BBKCWBLNR"
-};
+    const ideasWall = document.getElementById("ideasWall");
+    const langFilter = document.getElementById("langFilter");
+    const sortFilter = document.getElementById("sortFilter");
 
-// Initialisation Firebase (très important)
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-  
-  // Firebase UI config
-  const uiConfig = {
-    signInSuccessUrl: '/',
-    signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    ],
-    tosUrl: '',
-    privacyPolicyUrl: ''
-  };
+    function renderIdeas() {
+      ideasWall.innerHTML = "";
+      let filtered = [...ideas];
 
-  // Initialize the FirebaseUI Widget using Firebase.
-  const ui = new firebaseui.auth.AuthUI(auth);
+      const lang = langFilter.value;
+      if (lang !== "all") {
+        filtered = filtered.filter(i => i.lang === lang);
+      }
 
-  // Elements
-  const loginBtn = document.getElementById('loginBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const loginModal = document.getElementById('loginModal');
-  const closeLogin = document.getElementById('closeLogin');
-  const userInfo = document.getElementById('userInfo');
+      const sort = sortFilter.value;
+      filtered.sort((a, b) => {
+        if (sort === "date-desc") return b.date - a.date;
+        if (sort === "date-asc") return a.date - b.date;
+        if (sort === "likes-desc") return b.likes - a.likes;
+        if (sort === "likes-asc") return a.likes - b.likes;
+      });
 
-  loginBtn.addEventListener('click', () => {
-    loginModal.classList.add('active');
-    ui.start('#firebaseui-auth-container', uiConfig);
-  });
+      for (const idea of filtered) {
+        const div = document.createElement("div");
+        div.className = "idea";
+        div.style.borderColor = idea.color;
 
-  closeLogin.addEventListener('click', () => {
-    loginModal.classList.remove('active');
-  });
-
-  logoutBtn.addEventListener('click', () => {
-    auth.signOut();
-  });
-
-  // === UTILITAIRE COULEUR ALEATOIRE ===
- 
-function randomColor() {
-  // Couleurs pastel soft
-  const r = Math.floor(150 + Math.random() * 105);
-  const g = Math.floor(150 + Math.random() * 105);
-  const b = Math.floor(150 + Math.random() * 105);
-  return `rgb(${r},${g},${b})`;  // <- backticks autour et retour d'une string
-}
-
-// === DONNEES initiales ===
-let ideas = [
-
-];
-
-// === ETAT ===
-let currentUser = null;
-let likedIdeas = {}; // { ideaId: true } stocker localement les likes pour empêcher multi-like
-
-// Charge likes stockés en localStorage
-function loadLocalLikes() {
-const data = localStorage.getItem('likedIdeas');
-if(data) {
-likedIdeas = JSON.parse(data);
-}
-}
-function saveLocalLikes() {
-localStorage.setItem('likedIdeas', JSON.stringify(likedIdeas));
-}
-
-// === AFFICHAGE ===
-const ideasWall = document.getElementById('ideasWall');
-const langFilter = document.getElementById('langFilter');
-const sortFilter = document.getElementById('sortFilter');
-const resetFilters = document.getElementById('resetFilters');
-
-function renderIdeas() {
-ideasWall.innerHTML = '';
-// Filtrer par langue
-let filteredIdeas = [...ideas];
-const langVal = langFilter.value;
-if(langVal !== 'all') {
-  filteredIdeas = filteredIdeas.filter(i => i.lang === langVal);
-}
-
-// Trier
-const sortVal = sortFilter.value;
-if(sortVal === 'date-desc') {
-  filteredIdeas.sort((a,b) => b.date - a.date);
-} else if(sortVal === 'date-asc') {
-  filteredIdeas.sort((a,b) => a.date - b.date);
-} else if(sortVal === 'likes-desc') {
-  filteredIdeas.sort((a,b) => b.likes - a.likes);
-} else if(sortVal === 'likes-asc') {
-  filteredIdeas.sort((a,b) => a.likes - b.likes);
-}
-
-// Créer DOM
-filteredIdeas.forEach(idea => {
-  const div = document.createElement('div');
-  div.className = 'idea';
-  div.style.borderColor = idea.color;
-
-  // Texte + numéro + chaîne + langue
-  div.innerHTML = `
-    <div><strong>#${idea.number} [${idea.chain}]</strong> (${idea.lang.toUpperCase()})</div>
-    <div style="margin-top:0.3em; white-space: pre-wrap;">${idea.content}</div>
-    <div class="meta">
-      <div class="author">
-        <a href="${idea.authorLink}" target="_blank" rel="noopener">${idea.author}</a>
-        <span class="date">${idea.date.toLocaleString()}</span>
-      </div>
-      <div class="likes">
-        <button class="like-btn" data-id="${idea.id}">❤</button>
-        <span class="like-count">${idea.likes}</span>
-      </div>
-    </div>
-  `;
-
-  // Like button disable si non connecté ou déjà liké
-  const likeBtn = div.querySelector('.like-btn');
-  if(!currentUser) {
-    likeBtn.disabled = true;
-    likeBtn.title = "Connectez-vous pour liker";
-  } else if(likedIdeas[idea.id]) {
-    likeBtn.disabled = true;
-    likeBtn.title = "Vous avez déjà liké";
-  } else {
-    likeBtn.disabled = false;
-    likeBtn.title = "Liker";
-  }
-
-  // Événement Like
-  likeBtn.addEventListener('click', () => {
-    if(!currentUser) {
-      alert("Connectez-vous pour liker cette idée.");
-      return;
+        div.innerHTML = `
+          <div><strong>#${idea.number}</strong> | ${idea.lang.toUpperCase()} | ${idea.date.toLocaleDateString()} | 
+          <a href="${idea.chainLink}" target="_blank">${idea.chain}</a></div>
+          <div style="margin-top: 0.5em;">${idea.content}</div>
+          <div class="meta">
+            <a href="${idea.authorLink}" target="_blank">${idea.author}</a>
+            ❤️ ${idea.likes}
+          </div>
+        `;
+        ideasWall.appendChild(div);
+      }
     }
-    if(likedIdeas[idea.id]) {
-      alert("Vous avez déjà liké cette idée.");
-      return;
-    }
-    // Incrémenter likes localement (puis re-render)
-    idea.likes++;
-    likedIdeas[idea.id] = true;
-    saveLocalLikes();
+
+    langFilter.addEventListener("change", renderIdeas);
+    sortFilter.addEventListener("change", renderIdeas);
     renderIdeas();
-  });
-
-  ideasWall.appendChild(div);
-});
-}
-
-// === GESTION FILTRES ===
-langFilter.addEventListener('change', renderIdeas);
-sortFilter.addEventListener('change', renderIdeas);
-resetFilters.addEventListener('click', () => {
-langFilter.value = 'all';
-sortFilter.value = 'date-desc';
-renderIdeas();
-});
-
-// === AUTHENTIFICATION ===
-auth.onAuthStateChanged(user => {
-currentUser = user;
-if(user) {
-loginBtn.style.display = 'none';
-logoutBtn.style.display = 'inline-block';
-userInfo.style.display = 'inline';
-userInfo.textContent = `Bonjour, ${user.displayName || user.email}`;
-loginModal.classList.remove('active');
-} else {
-loginBtn.style.display = 'inline-block';
-logoutBtn.style.display = 'none';
-userInfo.style.display = 'none';
-userInfo.textContent = '';
-}
-renderIdeas();
-});
-
-// Au démarrage
-loadLocalLikes();
-renderIdeas();
-
-</script> </body> 
+  </script>
+</body>
 </html>
+
