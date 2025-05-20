@@ -211,19 +211,19 @@
 
 <script>
   // Ta config Firebase (à remplacer par ta config)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDcFd8YZqGtN3ekwcgxPdgR0kdvGMhUDlw",
-    authDomain: "thewallofideas.firebaseapp.com",
-    projectId: "thewallofideas",
-    storageBucket: "thewallofideas.appspot.com",
-    messagingSenderId: "705936042775",
-    appId: "1:705936042775:web:5454fdcbf0a8c2efd2e552",
-    measurementId: "G-9BBKCWBLNR"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyDcFd8YZqGtN3ekwcgxPdgR0kdvGMhUDlw",
+  authDomain: "thewallofideas.firebaseapp.com",
+  projectId: "thewallofideas",
+  storageBucket: "thewallofideas.firebasestorage.app",
+  messagingSenderId: "705936042775",
+  appId: "1:705936042775:web:5454fdcbf0a8c2efd2e552",
+  measurementId: "G-9BBKCWBLNR"
+};
 
-  // Init Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+// Initialisation Firebase (très important)
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
   // Firebase UI config
   const uiConfig = {
@@ -403,9 +403,4 @@ loadLocalLikes();
 renderIdeas();
 
 </script> </body> 
-</html>
-
-
-  </script>
-</body>
 </html>
